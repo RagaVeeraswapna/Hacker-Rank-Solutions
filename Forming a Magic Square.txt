@@ -1,0 +1,109 @@
+import java.io.*;
+import java.math.*;
+import java.security.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.regex.*;
+
+class Result {
+
+    /*
+     * Complete the 'formingMagicSquare' function below.
+     *
+     * The function is expected to return an INTEGER.
+     * The function accepts 2D_INTEGER_ARRAY s as parameter.
+     */
+    private static final List<int[][]> all;
+
+    static {
+        final int[][] original = new int[][]{
+            new int[]{8,1,6},
+            new int[]{3,5,7},
+            new int[]{4,9,2}
+        };
+        int[][] r1 = rotate(original);
+        int[][] r2 = rotate(r1);
+        int[][] r3 = rotate(r2);
+        int[][] t = transpose(original);
+        int[][] t1 = rotate(t);
+        int[][] t2 = rotate(t1);
+        int[][] t3 = rotate(t2);
+        all = Arrays.asList(original, r1, r2, r3, t, t1, t2, t3);
+    }
+
+
+    public static int formingMagicSquare(List<List<Integer>> s) {
+    // Write your code here
+        int retval = 100;
+        for(int[][] test:all) {
+            int d = diff(s, test);
+            if (d < retval) retval = d;
+        }
+        return retval;
+    }
+    
+    static int diff(List<List<Integer>> a, int[][] b) {
+        int retval = 0;
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+                retval += Math.abs(a.get(i).get(j) - b[i][j]);
+            }
+        }
+        return retval;
+    }
+    
+    static int[][] rotate(int[][] m) {
+        final int n = 3;
+        int[][] retval = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                retval[i][j] = m[n-j-1][i];
+            }
+        }
+        return retval;
+    }
+    
+    static int[][] transpose(int[][] m) {
+        final int n = 3;
+        int[][] retval = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                retval[i][j] = m[j][i];
+            }
+        }
+        return retval;
+
+    }
+
+}
+
+public class Solution {
+    public static void main(String[] args) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(System.getenv("OUTPUT_PATH")));
+
+        List<List<Integer>> s = new ArrayList<>();
+
+        for (int i = 0; i < 3; i++) {
+            String[] sRowTempItems = bufferedReader.readLine().replaceAll("\\s+$", "").split(" ");
+
+            List<Integer> sRowItems = new ArrayList<>();
+
+            for (int j = 0; j < 3; j++) {
+                int sItem = Integer.parseInt(sRowTempItems[j]);
+                sRowItems.add(sItem);
+            }
+
+            s.add(sRowItems);
+        }
+
+        int result = Result.formingMagicSquare(s);
+
+        bufferedWriter.write(String.valueOf(result));
+        bufferedWriter.newLine();
+
+        bufferedReader.close();
+        bufferedWriter.close();
+    }
+}
